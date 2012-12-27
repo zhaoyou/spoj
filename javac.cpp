@@ -53,12 +53,21 @@ string transToJava(string input) {
   return s;
 }
 
+bool checkIsJava(string input) {
+  for(int i = 0; i < input.size(); i++) {
+    if (input[i] >= 'A' && input[i] <= 'Z') {
+      return true;
+    }
+  }
+  return false;
+}
+
+
 bool checkIsC(string input) {
   string pattern ("_");
   size_t found;
   found = input.find(pattern);
   if (found != string::npos) {
-
     //cout << int(found);
     return true;
   } else {
@@ -83,35 +92,19 @@ bool checkLastChar(string input) {
   return false;
 }
 
-bool isSingle(string input) {
-  if (input.size() == 1) {
-    return checkFirstChar(input);
-  } else {
-    for (int i = 0; i < input.size(); i++) {
-      if ((input[i] == '_' && (i != input.size() -1)) || (input[i] >= 'A' && input[i] <= 'Z')) {
-        return false;
-      }
-    }
-    return true;
-  }
-}
 
 bool checkValid(string input) {
   // check first char.
   if (checkFirstChar(input) && checkLastChar(input)) {
     bool javaFlag = false;
-    bool cFlag = false;
+    int c_count = 0;
     for (int i = 0; i < input.size(); i++) {
-
+      // check char is a-z, A-Z, or _.
       if ((input[i] >= 'A' && input[i] <= 'Z') || (input[i] >= 'a' && input[i] <= 'z') || input[i] == '_' ) {
 
-        if (input[i] == '_') {
-          if (cFlag) {
-            return false;
-          }
+        if (input[i] == '_' && input[i-1] == '_') return false;
+        if (input[i] == '_') c_count++;
 
-          cFlag = true;
-        }
 
         if(input[i] >= 'A' && input[i] <= 'Z') {
           javaFlag = true;
@@ -122,7 +115,7 @@ bool checkValid(string input) {
       }
     }
 
-    if (javaFlag && cFlag) {
+    if (c_count != 0 && javaFlag) {
       return false;
     } else {
       return true;
@@ -133,26 +126,18 @@ bool checkValid(string input) {
 }
 
 string trans(string input) {
-  // check valid.
+
   if (checkValid(input)) {
-    // check is single .
-    if (isSingle(input)) {
-      //cout  << input << " is a single" << endl;
-      return input;
-    } else {
-
       //cout  << input << " is not single" << endl;
-      // is c++ var
       if (checkIsC(input)) {
-
         //cout  << input << " is a c var" << endl;
         return transToJava(input);
-      } else { // is java var.
-
+      } else if (checkIsJava(input)) {
         //cout  << input << " is a java var" << endl;
         return transToC(input);
+      } else {
+        return input;
       }
-    }
   } else {
     //cout  << input << " is not valid" << endl;
     return "Error!";
@@ -162,14 +147,8 @@ string trans(string input) {
 int main() {
   string word;
   while(cin >>  word) {
-    //cout << checkIsC(word) << endl;
     string s = trans(word);
-    //string s2 = trans(s);
-    //if ( s2 == word) {
-      cout << s  << endl;
-    //} else {
-    //  cout << "Error!" << endl;
-    //}
+    cout << s << endl;
   }
   return 0;
 }
