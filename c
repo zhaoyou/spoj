@@ -1,13 +1,4 @@
-nEERC
-adb_
-_aab
-nam__e
-firstName
-aaa_bb
-A
-a
-_
-skjddjk_k
-kjdk$kljk
-skjdNjk_
-$
+3
+1/2
+2/5
+7/3
