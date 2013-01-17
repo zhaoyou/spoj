@@ -9,7 +9,25 @@
 #include <list>
 #include <map>
 #include <cmath>
+
 using namespace std;
+
+
+int int_infinity = numeric_limits<int>::max();
+
+int getIndex(int *all, int all_count) {
+  int index = 0;
+  int limit_index = all_count / 2;
+  while (index < limit_index) {
+    if (all[index * 2 + 1] == all[index]) {
+      index = (index * 2) + 1;
+    } else {
+      index = (index * 2) + 2;
+    }
+  }
+  return index - limit_index;
+}
+
 
 void displayWinerTree(int *all, int all_count) {
   cout << "**** all element: ***" << endl;
@@ -33,42 +51,40 @@ void updateWinerTree(int *all, int all_count, int index, int data) {
 
   all[index] = data;
 
-  while(index != 0) {
-    int min = all[index];
+  // if top max's index is current index, should be recalc max.
+  if (data == int_infinity) {
+    while(index != 0) {
 
-    int neighbour = 0;
-    if (index%2 ==0) {
-      neighbour = all[index -1];
-    } else {
-      neighbour = all[index + 1];
-    }
+      int min = all[index];
+      int neighbour = 0;
+      if (index%2 ==0) {
+        neighbour = all[index -1];
+      } else {
+        neighbour = all[index + 1];
+      }
 
-    if (min > neighbour) {
-      min = neighbour;
+      if (min > neighbour) {
+        min = neighbour;
+      }
+     // cout << index << " " << all[index] << ">>" << neighbour << " min: " << min << endl;
+      all[(index - 1) / 2] = min;
+      index = (index - 1) / 2;
+
     }
-    //cout << index << " " << all[index] << ">>" << neighbour << " min: " << min << endl;
-    if (index%2 == 0) {
-      all[(index - 2) / 2] = min;
-      index = (index - 2) / 2;
-    } else {
-      all[(index - 1 ) / 2] = min;
-      index = (index - 1 ) / 2;
+  } else {
+    while(index != 0) {
+      int min = all[index];
+
+      if (all[(index -1)/2] <= min) {
+        break;
+      }
+      all[(index - 1) / 2] = min;
+      index = (index - 1) / 2;
     }
   }
+
 }
 
-int getIndex(int *all, int all_count) {
-  int index = 0;
-  int limit_index = all_count / 2;
-  while (index < limit_index) {
-    if (all[index * 2 + 1] == all[index]) {
-      index = (index * 2) + 1;
-    } else {
-      index = (index * 2) + 2;
-    }
-  }
-  return index - limit_index;
-}
 
 void buildWinerTree(int *dist, int count) {
   int int_max = numeric_limits<int>::max();
@@ -85,37 +101,14 @@ void buildWinerTree(int *dist, int count) {
 
   for(int i = 0; i <c; i++) {
       if ( i < count) {
-        //all[i + c - 1] = dist[i];
-        //cout << (i + c -1) << endl;
         int calcIndex =  i + c -1;
-        //if (i%2 != 0) {
-        //  calcIndex = i + c -2;
-        //}
-          updateWinerTree(all, all_count, calcIndex, dist[i]);
+        updateWinerTree(all, all_count, calcIndex, dist[i]);
       }
   }
 
 
-  //cout << "**** all element: ***" << endl;
-  //for(int i = 0; i < all_count; i++) {
-  //  cout << all[i] << endl;
-  //}
   cout << "min: " << all[0] << endl;
   cout << "index: " << getIndex(all, all_count) << endl;
-}
-
-
-
-int getMin(int *dist, int *visted, int count) {
-  int index = -1;
-  int min = numeric_limits<int>::max();
-  for (int i = 0; i < count; i++) {
-    if (visted[i] == 0 && dist[i] < min) {
-      index = i;
-      min = dist[i];
-    }
-  }
-  return index;
 }
 
 
@@ -125,7 +118,6 @@ void getShortPath(vector<pair<int, int> > *weight, int start, int end, int city_
   // cout << " get ShortPath " << start << end << endl;
   int visted[city_count];
   int dist[city_count];
-  int int_infinity = numeric_limits<int>::max() ;
 
   // get winer tree array.
   int lowbit = getLowbit(city_count);
@@ -157,6 +149,7 @@ void getShortPath(vector<pair<int, int> > *weight, int start, int end, int city_
 
   //displayWinerTree(winer_tree, all_count);
 
+  //int j = 0;
   while(!source.empty()) {
     int u = getIndex(winer_tree, all_count); //getMin(dist, visted, city_count);
     //if (u == -1) {
@@ -166,6 +159,13 @@ void getShortPath(vector<pair<int, int> > *weight, int start, int end, int city_
     // TODO zhaoyou marked element infinity if which if minest.
     //winer_tree[u + lowbit -1] = int_infinity;
     updateWinerTree(winer_tree, all_count, u + lowbit -1, int_infinity);
+
+    //cout << "u: " << u  << endl;
+    //displayWinerTree(winer_tree, all_count);
+    //if ( j == 9) {
+    //  return;
+    //}
+    //j++;
 
     //cout << u << endl;
 
@@ -191,20 +191,13 @@ void getShortPath(vector<pair<int, int> > *weight, int start, int end, int city_
         int alt = dist[u] + cost;
         if (alt < dist[index]) {
           dist[index] = alt;
-          //cout << "index: " << index << " value: " << alt << " all_index: " << (index + lowbit - 1) << endl;
+   //       cout << "index: " << index << " value: " << alt << " all_index: " << (index + lowbit - 1) << endl;
           updateWinerTree(winer_tree, all_count, index + lowbit -1, alt);
-         // displayWinerTree(winer_tree, all_count);
+    //      displayWinerTree(winer_tree, all_count);
         }
       }
     }
   }
-
-  cout << "result: " <<  dist[end] << endl;
-  //cout << "***********************" << endl;
-  //for (int i = 0 ; i < city_count; i++) {
-  //  cout << dist[i] << endl;
-  //}
-
 }
 
 void readFindCase(vector<pair<int, int> > *weight, map<string, int> city_map, int city_count) {
@@ -220,44 +213,32 @@ void readFindCase(vector<pair<int, int> > *weight, map<string, int> city_map, in
 }
 
 void readInput() {
+  int city_count;
+  scanf("%d", &city_count);
 
-    int city_count;
-    scanf("%d", &city_count);
 
+  vector<pair<int,int> > weight[city_count];
 
-    vector<pair<int,int> > weight[city_count];
+  map<string, int> city_map;
+  for (int j = 0; j < city_count; j++) {
+    string city;
+    int neighbour_count;
+    cin >> city;
+    cin >> neighbour_count;
+    city_map[city] = j;
 
-    map<string, int> city_map;
-    for (int j = 0; j < city_count; j++) {
-      string city;
-      int neighbour_count;
-      cin >> city;
-      cin >> neighbour_count;
-      city_map[city] = j;
-
-      vector<pair<int, int> > v;
-for (int k = 0; k < neighbour_count; k++) {
-        pair<int, int> item;
-        int index, cost;
-        scanf("%d %d", &index, &cost);
-        item.first= index;
-        item.second = cost;
-        v.push_back (item);
-      }
-
-      weight[j] = v;
+    vector<pair<int, int> > v;
+    for (int k = 0; k < neighbour_count; k++) {
+      pair<int, int> item;
+      int index, cost;
+      scanf("%d %d", &index, &cost);
+      item.first= index;
+      item.second = cost;
+      v.push_back (item);
     }
-
-    //for(int i = 0; i < city_count; i++) {
-    //  vector<pair<int, int> > v2 = weight[i];
-    //  for (int j = 0; j < v2.size(); j++) {
-    //    cout << v2[j].first << ":" << v2[j].second << endl;
-    //  }
-    //  cout << "*****" << endl;
-    //}
-
-    readFindCase(weight, city_map, city_count);
-
+    weight[j] = v;
+  }
+  readFindCase(weight, city_map, city_count);
 }
 
 
@@ -268,30 +249,4 @@ int main() {
   for (int i = 0; i < test_count; i++) {
     readInput();
   }
-  //int count;
-  //int dist[count];
-  //scanf("%d", &count);
-  //for (int i = 0; i < count; i++) {
-  //  cin >> dist[i];
-  //}
-
-  //int a = log2(7);
-  //cout << a << "********" << endl;
-  //int b = pow(2, 3);
-  //cout << b << "********" << endl;
-  //buildWinerTree(dist, count);
-  //unsigned int value = 5;
-  //cout << (value >> 1) << endl;
-  //cout << (value << 1) << endl;
-  //int lowbit = 4 & 1;
-  //cout << lowbit <<endl;
-  //int number;
-  //scanf("%d", &number);
-  //int lowbit = number&(-number);
-  //while (number != lowbit) {
-  //  number = number + lowbit;
-  //  lowbit = number&(-number);
-  //}
-
-  //cout << lowbit << endl;
 }
