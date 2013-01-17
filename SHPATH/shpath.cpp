@@ -63,13 +63,13 @@ void updateWinerTree(int *all, int all_count, int index, int data) {
         neighbour = all[index + 1];
       }
 
+
       if (min > neighbour) {
         min = neighbour;
       }
      // cout << index << " " << all[index] << ">>" << neighbour << " min: " << min << endl;
       all[(index - 1) / 2] = min;
       index = (index - 1) / 2;
-
     }
   } else {
     while(index != 0) {
@@ -116,7 +116,7 @@ void getShortPath(vector<pair<int, int> > *weight, int start, int end, int city_
 
 
   // cout << " get ShortPath " << start << end << endl;
-  int visted[city_count];
+  bool visted[city_count];
   int dist[city_count];
 
   // get winer tree array.
@@ -130,8 +130,7 @@ void getShortPath(vector<pair<int, int> > *weight, int start, int end, int city_
   //cout << "start: " << start << " end: " << end << " winer_tree count: " << all_count << endl;
 
   // TODO zhaoyou max, min infinity.
-  memset(visted, 0, city_count * sizeof(int));
-  memset(dist,  int_infinity, city_count * sizeof(int));
+  memset(visted, false, city_count * sizeof(false));
 
   for(int i = 0; i < city_count; i++) {
     dist[i] = int_infinity;
@@ -139,10 +138,7 @@ void getShortPath(vector<pair<int, int> > *weight, int start, int end, int city_
 
 
 
-  list<int> source;
-  for(int i = 0; i < city_count; i++) {
-    source.push_back (i);
-  }
+
 
   dist[start] = 0;
   updateWinerTree(winer_tree, all_count, start + lowbit -1, 0);
@@ -150,7 +146,7 @@ void getShortPath(vector<pair<int, int> > *weight, int start, int end, int city_
   //displayWinerTree(winer_tree, all_count);
 
   //int j = 0;
-  while(!source.empty()) {
+  while(true) {
     int u = getIndex(winer_tree, all_count); //getMin(dist, visted, city_count);
     //if (u == -1) {
     //  break;
@@ -177,8 +173,7 @@ void getShortPath(vector<pair<int, int> > *weight, int start, int end, int city_
       cout << dist[end] << endl;
       return;
     }
-    source.remove(u);
-    visted[u] = 1;
+    visted[u] = true;
 
     vector<pair<int, int> > v = weight[u];
 
@@ -187,7 +182,7 @@ void getShortPath(vector<pair<int, int> > *weight, int start, int end, int city_
       // v[j].first has not yet been removed
       int index = v[j].first - 1;
       int cost = v[j].second;
-      if (visted[index] == 0) {
+      if (!visted[index]) {
         int alt = dist[u] + cost;
         if (alt < dist[index]) {
           dist[index] = alt;
