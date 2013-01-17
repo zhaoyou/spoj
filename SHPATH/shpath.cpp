@@ -30,11 +30,9 @@ int getIndex(int *all, int all_count) {
 
 
 void displayWinerTree(int *all, int all_count) {
-  cout << "**** all element: ***" << endl;
   for(int i = 0; i < all_count; i++) {
     cout << all[i] << endl;
   }
-  cout << "***************" << endl;
 }
 
 int getLowbit(int number) {
@@ -106,9 +104,6 @@ void buildWinerTree(int *dist, int count) {
       }
   }
 
-
-  cout << "min: " << all[0] << endl;
-  cout << "index: " << getIndex(all, all_count) << endl;
 }
 
 
@@ -143,31 +138,14 @@ void getShortPath(vector<pair<int, int> > *weight, int start, int end, int city_
   dist[start] = 0;
   updateWinerTree(winer_tree, all_count, start + lowbit -1, 0);
 
-  //displayWinerTree(winer_tree, all_count);
 
-  //int j = 0;
   while(true) {
-    int u = getIndex(winer_tree, all_count); //getMin(dist, visted, city_count);
-    //if (u == -1) {
-    //  break;
-    //}
+    int u = getIndex(winer_tree, all_count);
 
     // TODO zhaoyou marked element infinity if which if minest.
     //winer_tree[u + lowbit -1] = int_infinity;
     updateWinerTree(winer_tree, all_count, u + lowbit -1, int_infinity);
 
-    //cout << "u: " << u  << endl;
-    //displayWinerTree(winer_tree, all_count);
-    //if ( j == 9) {
-    //  return;
-    //}
-    //j++;
-
-    //cout << u << endl;
-
-    //if (u != 0) {
-    //  return;
-    //}
 
     if (u == end) {
       cout << dist[end] << endl;
@@ -186,9 +164,7 @@ void getShortPath(vector<pair<int, int> > *weight, int start, int end, int city_
         int alt = dist[u] + cost;
         if (alt < dist[index]) {
           dist[index] = alt;
-   //       cout << "index: " << index << " value: " << alt << " all_index: " << (index + lowbit - 1) << endl;
           updateWinerTree(winer_tree, all_count, index + lowbit -1, alt);
-    //      displayWinerTree(winer_tree, all_count);
         }
       }
     }
