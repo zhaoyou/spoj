@@ -22,7 +22,6 @@ void getOverlay(string pattern, int *p) {
       }
     }
     p[i] = index;
-
     //cout << "substring: " << sub << " index: " << index << endl;
   }
 }
@@ -34,7 +33,6 @@ void getOverlay2(string pattern, int *overlay_function) {
     for(int i=1;i<pattern_length;++i)
     {
         index = overlay_function[i-1];
-        //store previous fail position k to index;
 
         while(index>=0 && pattern[i]!=pattern[index+1])
         {
@@ -49,50 +47,52 @@ void getOverlay2(string pattern, int *overlay_function) {
             overlay_function[i] = -1;
         }
     }
-    //for(int i=0;i<pattern_length;++i)
-    //{
-    //    cout<<overlay_function[i]<<endl;
+    //for(int i = 0; i < pattern_length; i++) {
+    //  cout << overlay_function[i] << endl;
     //}
-    //delete[] overlay_function;
 }
+
+void calc(char *pattern, int *p, int pattern_len) {
+
+  int pattern_index = 0;
+  int index = 0;
+
+  char c;
+  scanf("%c", &c);
+
+  while(c != '\n') {
+    if (c == pattern[pattern_index]) {
+      pattern_index ++;
+      index ++;
+    } else {
+
+      while(pattern_index != -1) {
+        pattern_index = p[pattern_index] + 1;
+      }
+
+      if (pattern_index == pattern_len) {
+         cout << index - pattern_len << endl;
+         pattern_index = p[pattern_len - 1] + 1;
+      }
+    }
+
+    scanf("%c", &c);
+  }
+  cout << endl;
+}
+
 
 int main() {
 
   int pattern_len;
 
-  while(cin >> pattern_len) {
-    string pattern;
-    cin >> pattern;
+  while(scanf("%d\n", &pattern_len) == 1) {
+    char pattern[pattern_len + 1];
+    scanf("%s\n", &pattern);
 
     int p[pattern_len];
-    //getOverlay(pattern, p);
     getOverlay2(pattern, p);
-    int pattern_index = 0;
-    int index = 0;
 
-
-    char c;
-    scanf("%c", &c);
-    scanf("%c", &c);
-    //cout << "len: " << pattern_len << " pattern: " << pattern << " c: " << c << endl;
-    while(c != '\n') {
-      while(c == pattern[pattern_index] && pattern_index < pattern_len) {
-        pattern_index ++;
-        index ++;
-        scanf("%c", &c);
-      }
-
-      if (pattern_index == pattern_len) {
-         cout << index - pattern_len << endl;
-         pattern_index = p[pattern_len -1] + 1;
-      } else if(pattern_index == 0) {
-        index++;
-        scanf("%c", &c);
-      } else {
-        pattern_index = p[pattern_index] + 1;
-      }
-    }
-    cout << endl;
+    calc(pattern, p, pattern_len);
   }
 }
-
