@@ -55,27 +55,28 @@ void getOverlay2(string pattern, int *overlay_function) {
 void calc(char *pattern, int *p, int pattern_len) {
 
   int pattern_index = 0;
-  int index = 0;
+  int index = 1;
 
   char c;
   scanf("%c", &c);
 
   while(c != '\n') {
+
+    //cout << "********" << endl;
+    while(c != pattern[pattern_index] && pattern_index > 0 ) {
+      pattern_index = p[pattern_index - 1] + 1;
+     // cout << c << ": " << pattern_index << endl;
+    }
     if (c == pattern[pattern_index]) {
-      pattern_index ++;
-      index ++;
-    } else {
-
-      while(pattern_index != -1) {
-        pattern_index = p[pattern_index] + 1;
-      }
-
-      if (pattern_index == pattern_len) {
-         cout << index - pattern_len << endl;
-         pattern_index = p[pattern_len - 1] + 1;
-      }
+      pattern_index++;
     }
 
+    if (pattern_index == pattern_len) {
+      cout << "index: " << pattern_index << ":" << index - pattern_index << endl;
+      pattern_index = p[pattern_index-1] + 1;
+    }
+
+    index++;
     scanf("%c", &c);
   }
   cout << endl;
@@ -92,7 +93,6 @@ int main() {
 
     int p[pattern_len];
     getOverlay2(pattern, p);
-
     calc(pattern, p, pattern_len);
   }
 }
