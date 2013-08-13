@@ -1,5 +1,7 @@
-// a b a b
-
+/**
+ * Find str contains substr.
+ * hadeser7@gmail.com
+ */
 function search(str, substr, p) {
   var n = str.length;
   var m = substr.length;
@@ -19,7 +21,10 @@ function search(str, substr, p) {
   }
 }
 
-//search('abababaabab', 'abab', [0, 0, 1, 2]);
+/**
+ * Pre_handler for substr.
+ * hadeser7@gmail.com
+ */
 function pre_search(substr) {
   var m = substr.length;
   var p = [];
@@ -36,4 +41,4 @@ function pre_search(substr) {
   return p;
 }
 
-pre_search("abaabcaba");
+search("abababacabab", "abab", pre_search("abab"));
