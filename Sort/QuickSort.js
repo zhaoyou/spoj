@@ -27,6 +27,7 @@ function QuickSort(datas, low, high) {
     QuickSort(datas, pivot + 1, high);
 }
 
+//  2, 5, 3, 4
 function unitSort(array, low, high) {
   var key = array[low];
   while(low < high) {
